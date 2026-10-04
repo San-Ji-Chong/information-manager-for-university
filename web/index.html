@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大学信息集成系统</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <h1>大学信息集成系统</h1>
+  <div class="tabs">
+    <button data-view="cal" class="on">日历</button>
+    <button data-view="train">思训</button>
+    <button data-view="res">资料</button>
+    <button data-view="inbox">收件箱</button>
+  </div>
+  <nav id="calnav">
+    <button id="prev">‹</button>
+    <span id="label"></span>
+    <button id="next">›</button>
+    <button id="today">今天</button>
+  </nav>
+  <label class="import">
+    导入 helenote 截图
+    <input type="file" id="import" accept="image/png,image/jpeg">
+  </label>
+</header>
+<main id="calview">
+  <div class="calrow">
+    <section id="gridwrap">
+      <div class="weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+      <div id="grid"></div>
+    </section>
+    <aside id="panel"><p class="hint">点某一天看详情</p></aside>
+  </div>
+  <section id="priolist">
+    <div class="priobar">
+      <b>待办优先级</b>
+      <span class="tip">拖拽调顺序,越靠上越优先;和日期无关</span>
+      <span class="cnt" id="priocnt"></span>
+      <button class="mini" id="priotoggle">收起</button>
+    </div>
+    <div id="prioitems"><p class="hint">载入中…</p></div>
+  </section>
+</main>
+<main id="trainview" hidden>
+  <section id="doclist"><p class="hint">还没有文档,先在语雀控制台跑同步脚本</p></section>
+  <article id="reader"><p class="hint">左侧选一篇活动文档</p></article>
+</main>
+<main id="resview" hidden>
+  <aside id="resside">
+    <input id="resq" placeholder="搜索标题 / 备注 / 路径" spellcheck="false">
+    <div id="tagbar"></div>
+  </aside>
+  <section id="reslist"><p class="hint">载入中…</p></section>
+</main>
+<main id="inboxview" hidden>
+  <section id="inboxwrap">
+    <div class="subtabs">
+      <button id="sub_qq" class="on">QQ 消息</button>
+      <button id="sub_paste">粘贴解析</button>
+    </div>
+    <section id="qqpane">
+      <div class="bar" id="qqbar"></div>
+      <div id="qqpend"></div>
+      <div id="qqbatches"></div>
+    </section>
+    <section id="pastepane" hidden>
+      <div class="bar">
+        <select id="srcsel">
+          <option value="wechat">微信群</option>
+          <option value="qq">QQ 群</option>
+          <option value="manual">其他</option>
+        </select>
+        <button id="parse">解析成待办</button>
+        <span class="tip">直接把群消息粘进来,自动分出必做 / 选做与截止时间,保存前可以逐条改</span>
+      </div>
+      <textarea id="paste" spellcheck="false" placeholder="张三 19:32&#10;本周六下午2点在苏州校区教一楼204开思训,所有人必须参加&#10;李四 19:40&#10;前置任务:10月5日23:59前把读书笔记提交到语雀"></textarea>
+      <div id="cands"></div>
+    </section>
+  </section>
+</main>
+<dialog id="resdlg">
+  <h3 id="dlgttl">新建资料</h3>
+  <div class="fld"><span>标题</span><input id="f_title" placeholder="高数期中复习提纲"></div>
+  <div class="fld"><span>网页链接</span><input id="f_url" spellcheck="false" placeholder="https://pan.nju.edu.cn/..."></div>
+  <div class="fld"><span>本地路径</span>
+    <span class="prow"><input id="f_path" spellcheck="false" placeholder="D:\学习资料\高数\期中提纲.pdf"><button type="button" class="mini" id="f_browse">浏览…</button></span>
+  </div>
+  <div class="fld2">
+    <div class="fld"><span>课程</span><input id="f_course" list="dl_course" placeholder="高等数学"></div>
+    <div class="fld"><span>类型</span><input id="f_kind" list="dl_kind" placeholder="笔记"></div>
+  </div>
+  <div class="fld"><span>标签</span><input id="f_tags" placeholder="逗号分隔,如:考点, 学长笔记"></div>
+  <div class="fld"><span>备注</span><textarea id="f_note" rows="3" placeholder="这份资料讲什么、看到哪了"></textarea></div>
+  <div class="dlgbar">
+    <span class="err" id="f_err"></span>
+    <button type="button" class="mini" id="f_cancel">取消</button>
+    <button type="button" class="btn primary" id="f_save">保存</button>
+  </div>
+</dialog>
+<datalist id="dl_course"></datalist>
+<datalist id="dl_kind"></datalist>
+<dialog id="fsdlg">
+  <div class="fsbar">
+    <button type="button" class="mini" id="fs_up">↑ 上层</button>
+    <input id="fs_path" spellcheck="false" placeholder="粘贴一个路径再点转到,如 D:\学习资料">
+    <button type="button" class="mini" id="fs_go">转到</button>
+  </div>
+  <div id="fs_list"></div>
+  <div class="dlgbar">
+    <span class="tip" id="fs_tip">点文件夹进去,点文件选中</span>
+    <button type="button" class="mini" id="fs_cancel">取消</button>
+    <button type="button" class="btn" id="fs_here">用当前文件夹</button>
+    <button type="button" class="btn primary" id="fs_ok">选中</button>
+  </div>
+</dialog>
+<script>
+  // 直接双击 index.html 打开时,样式和脚本都指向站点根路径,在 file:// 下全部加载失败,
+  // 页面只剩一个没样式的空壳。这时先说清楚该怎么打开,别让用户对着白板猜。
+  if (!/^https?:$/.test(location.protocol)) {
+    document.addEventListener('DOMContentLoaded', () => {
+      const box = document.createElement('div');
+      box.style.cssText = 'margin:16px;padding:14px 18px;border:2px solid #c0392b;border-radius:8px;'
+        + 'font:14px/1.8 sans-serif;background:#fdf0ee;color:#7a1f1a;max-width:620px';
+      box.innerHTML = '这个页面必须通过本地服务打开——直接双击文件只会得到现在这个没样式的空壳。<br>'
+        + '请在地址栏访问 <a href="http://127.0.0.1:8787/">http://127.0.0.1:8787/</a>'
+        + '(服务没起的话,在项目目录跑 <code>node server.js</code>),并把它加为书签。';
+      document.body.prepend(box);
+    });
+  }
+</script>
+<script type="module" src="/app.js"></script>
+</body>
+</html>

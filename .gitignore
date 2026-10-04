@@ -1,0 +1,5 @@
+# 本地数据一律不入库:数据库、群消息、截图、日志,以及填了真密钥的配置
+data/*
+!data/config.example.json
+node_modules/
+*.log

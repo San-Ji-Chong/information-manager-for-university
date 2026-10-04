@@ -1,0 +1,24 @@
+{
+  "qq": {
+    "url": "http://127.0.0.1:3000",
+    "token": "",
+    "groups": [
+      "QQ群号1",
+      "QQ群号2"
+    ],
+    "limit": 200,
+    "days": 7,
+    "page_size": 40,
+    "delay_ms": 400
+  },
+  "llm": {
+    "base_url": "OpenAI 兼容接口地址,如 https://api.example.com/v1",
+    "model": "模型名",
+    "api_key": "你的 LLM API Key"
+  },
+  "yuque": {
+    "base_url": "https://你的语雀域名/api/v2",
+    "namespace": "语雀团队login/知识库slug",
+    "token": "你的语雀 Token(只读权限即可)"
+  }
+}

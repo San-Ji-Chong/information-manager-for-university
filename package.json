@@ -1,0 +1,13 @@
+{
+  "name": "uni-info-hub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "大学信息集成系统 - 思训活动 / 群消息 / 日历 的本地聚合工具",
+  "scripts": {
+    "import:helenote": "node src/import-helenote.js",
+    "qq:sync": "node src/qq-sync.js",
+    "qq:probe": "node src/qq-sync.js --probe",
+    "start": "node server.js"
+  }
+}
